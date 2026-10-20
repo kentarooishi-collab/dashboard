@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Section } from './Section';
 import { companies, metricKeys, metrics, rankLabel, rankOf, type MetricKey } from '../data';
 import { linear, mean, niceDomain } from '../../shared/scale';
+import { MetricTerm } from '../glossary';
 
 interface Props { selected: string; onSelect: (id: string) => void }
 
@@ -59,6 +60,7 @@ export function CompetitorMap({ selected, onSelect }: Props) {
               <AxisSelect label="縦軸" value={y} onChange={setY} />
               <AxisSelect label="円の大きさ" value={size} onChange={setSize} />
             </div>
+            <p className="map__terms">指標の意味：{metricKeys.map((k) => <MetricTerm key={k} k={k} />)}</p>
             {preset && <p className="map__note">{preset.note}</p>}
             <Scatter x={x} y={y} size={size} selected={selected} hover={hover} onHover={setHover} onSelect={onSelect} />
             <Reading id={selected} keys={[x, y]} />
@@ -185,7 +187,7 @@ function Reading({ id, keys }: { id: string; keys: MetricKey[] }) {
       <span className="reading__who"><i style={{ background: c.color }} />{c.name}</span>
       {uniq.map((k) => (
         <span key={k} className="reading__item">
-          {metrics[k].label} <b className="num">{metrics[k].fmt(c[k])}{metrics[k].unit}</b>
+          <MetricTerm k={k} /> <b className="num">{metrics[k].fmt(c[k])}{metrics[k].unit}</b>
           <span className="reading__rank">{rankLabel(id, k)}</span>
         </span>
       ))}
@@ -203,7 +205,7 @@ function Ranking({ selected, onSelect }: { selected: string; onSelect: (id: stri
         return (
           <div key={k} className="ranking__block">
             <div className="ranking__head">
-              <h4>{m.label}<small>（{m.unit}）</small></h4>
+              <h4><MetricTerm k={k} /><small>（{m.unit}）</small></h4>
               <p>{m.hint}</p>
             </div>
             <ul>

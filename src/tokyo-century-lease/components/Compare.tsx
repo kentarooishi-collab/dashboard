@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUp, ExternalLink } from 'lucide-react';
 import { Section } from './Section';
 import { byId, companies, metricKeys, metrics, rankLabel, type MetricKey } from '../data';
 import { mean } from '../../shared/scale';
+import { MetricTerm, t } from '../glossary';
 
 interface Props { selected: string; onSelect: (id: string) => void }
 
@@ -40,7 +41,7 @@ export function Compare({ selected, onSelect }: Props) {
         <article className="card profile" style={{ ['--c' as string]: c.color }}>
           <span className="profile__short num">{c.short}</span>
           <h3>{c.name}</h3>
-          <p>{c.summary}</p>
+          <p>{t(c.summary)}</p>
           <div className="chips">{c.focus.map((f) => <span key={f} className="chip">{f}</span>)}</div>
           <div className="profile__links">
             <a href={c.financial} target="_blank" rel="noreferrer">財務ソース <ExternalLink size={13} /></a>
@@ -77,7 +78,7 @@ function MetricStrip({ k, id, baseId }: { k: MetricKey; id: string; baseId?: str
   return (
     <div className="strip">
       <div className="strip__head">
-        <span className="strip__label">{m.label}</span>
+        <span className="strip__label"><MetricTerm k={k} /></span>
         <span className="strip__value num">{m.fmt(c[k])}<small>{m.unit}</small></span>
         <span className={`strip__diff num ${diff >= 0 ? 'up' : 'down'}`}>
           {Math.abs(diff) < 1e-9 ? '±0' : <>{diff >= 0 ? <ArrowUp size={12} /> : <ArrowDown size={12} />}{diffText}</>}
@@ -133,7 +134,7 @@ function CompareTable({ selected, onSelect }: Props) {
               <th scope="col"><button type="button" onClick={() => toggle('name')}>会社 {arrow('name')}</button></th>
               {metricKeys.map((k) => (
                 <th key={k} scope="col" className="r" aria-sort={sort.key === k ? (sort.desc ? 'descending' : 'ascending') : 'none'}>
-                  <button type="button" onClick={() => toggle(k)}>{metrics[k].label}<small>{metrics[k].unit}</small> {arrow(k)}</button>
+                  <button type="button" onClick={() => toggle(k)}><MetricTerm k={k} focusable={false} /><small>{metrics[k].unit}</small> {arrow(k)}</button>
                 </th>
               ))}
               <th scope="col">ざっくり位置づけ</th>
@@ -149,7 +150,7 @@ function CompareTable({ selected, onSelect }: Props) {
                     <span className="num">{metrics[k].fmt(c[k])}</span>
                   </td>
                 ))}
-                <td className="summary">{c.summary}</td>
+                <td className="summary">{t(c.summary)}</td>
               </tr>
             ))}
           </tbody>

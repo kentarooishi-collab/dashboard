@@ -38,6 +38,7 @@
 .nobr { display: inline-block; }
 .hero__lead { margin-top: 18px; font-size: 16px; color: var(--ink-2); max-width: 560px; }
 .hero__lead strong { color: var(--ink); background: linear-gradient(transparent 62%, var(--accent-soft) 62%); }
+.hero__hint { margin-top: 12px; font-size: 13px; color: var(--muted); }
 .hero__path { list-style: none; padding: 0; margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .hero__path a {
   display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px;
@@ -150,6 +151,8 @@
   height: 38px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface);
   color: var(--ink); font: inherit; font-size: 14px; font-weight: 500;
 }
+.map__terms { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.map__terms .term { color: var(--ink); font-weight: 600; }
 .map__note { margin-top: 12px; font-size: 13px; color: var(--ink-2); padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--surface-2); border-radius: 0 8px 8px 0; }
 
 .scatter { position: relative; margin-top: 8px; }

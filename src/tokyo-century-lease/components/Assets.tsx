@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Section } from './Section';
 import { assets } from '../content';
+import { t } from '../glossary';
 
 export function Assets() {
   const [activeId, setActiveId] = useState(assets[0].id);
@@ -45,11 +46,11 @@ export function Assets() {
               <h3>{a.name}</h3>
             </div>
           </div>
-          <p className="asset-detail__desc">{a.desc}</p>
+          <p className="asset-detail__desc">{t(a.desc)}</p>
           <dl className="asset-detail__list">
             <div><dt>具体例</dt><dd className="chips">{a.examples.map((e) => <span key={e} className="chip">{e}</span>)}</dd></div>
-            <div><dt>どう稼ぐか</dt><dd>{a.earn}</dd></div>
-            <div><dt>何を読むか</dt><dd>{a.watch}</dd></div>
+            <div><dt>どう稼ぐか</dt><dd>{t(a.earn)}</dd></div>
+            <div><dt>何を読むか</dt><dd>{t(a.watch)}</dd></div>
           </dl>
         </article>
       </div>

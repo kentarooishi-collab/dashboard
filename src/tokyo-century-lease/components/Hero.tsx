@@ -1,4 +1,5 @@
 import { ArrowDown } from 'lucide-react';
+import { G, MetricTerm } from '../glossary';
 import { byId, companies, metrics, rankLabel, rankOf, type MetricKey } from '../data';
 
 const kpis: MetricKey[] = ['assets', 'profit', 'roe', 'equity'];
@@ -19,8 +20,11 @@ export function Hero() {
             <span className="nobr">なぜ<em>事業の中</em>まで</span><span className="nobr">入れるのか？</span>
           </h1>
           <p className="hero__lead">
-            答えは、<strong>アセット（資産）を自ら持ち、資金・残価・運用のリスクまで引き受ける</strong>から。
+            答えは、<strong><G k="アセット" />（資産）を自ら持ち、資金・<G k="残価" />・運用のリスクまで引き受ける</strong>から。
             仕組み → アセット → 競合の順に、触りながら理解できます。
+          </p>
+          <p className="hero__hint">
+            <span className="term">点線の用語</span>にマウスを乗せる（スマホはタップ）と、意味が表示されます。
           </p>
           <ol className="hero__path">
             <li><a href="#mechanism"><span className="num">01</span>お金とモノの流れ</a></li>
@@ -40,7 +44,7 @@ export function Hero() {
               const rank = rankOf('tc', k);
               return (
                 <div className="kpi" key={k}>
-                  <span className="kpi__label">{m.label}</span>
+                  <span className="kpi__label"><MetricTerm k={k} /></span>
                   <span className="kpi__value num">
                     {m.fmt(tc[k])}<small>{m.unit}</small>
                   </span>

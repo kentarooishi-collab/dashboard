@@ -1,0 +1,37 @@
+.term {
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  cursor: help;
+  border-radius: 3px;
+  transition: background .15s, color .15s;
+}
+.term:hover, .term:focus-visible { background: var(--accent-soft); color: var(--accent); }
+
+.term-tip {
+  position: fixed; z-index: 1000; pointer-events: none;
+  padding: 12px 14px; border-radius: 12px;
+  background: var(--ink); color: var(--bg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .22);
+  font-size: 13px; line-height: 1.65; text-align: left; font-weight: 400; letter-spacing: 0;
+  opacity: 0; transform: translateY(4px) scale(.98);
+  transition: opacity .16s ease, transform .16s ease;
+}
+.term-tip.is-below { transform: translateY(-4px) scale(.98); }
+.term-tip.is-visible { opacity: 1; transform: none; }
+.term-tip::after {
+  content: ""; position: absolute; left: var(--arrow); width: 10px; height: 10px;
+  background: inherit; transform: translateX(-50%) rotate(45deg);
+}
+.term-tip.is-above::after { bottom: -5px; }
+.term-tip.is-below::after { top: -5px; }
+.term-tip__head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.term-tip__head strong { font-size: 14px; }
+.term-tip__head span { opacity: .7; font-size: 12px; }
+.term-tip__formula {
+  display: inline-block; margin: 2px 0 6px; padding: 2px 8px; border-radius: 6px;
+  background: color-mix(in srgb, var(--bg) 14%, transparent); font-weight: 600; font-size: 12.5px;
+}
+.term-tip p { margin: 0; }
+.term-tip__example { margin-top: 6px !important; padding-top: 6px; border-top: 1px solid color-mix(in srgb, var(--bg) 20%, transparent); opacity: .85; font-size: 12.5px; }

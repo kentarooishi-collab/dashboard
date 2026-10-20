@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import { Section } from './Section';
 import { flowSteps, risks, type NodeId } from '../content';
+import { t } from '../glossary';
 
 interface NodeDef { x: number; y: number; w: number; h: number; title: string; sub: string[] }
 
@@ -97,7 +98,7 @@ export function Mechanism() {
                   <span className="step__num num">{i + 1}</span>
                   <span className="step__text">
                     <strong>{s.title}</strong>
-                    {i === active && <span className="step__body">{s.body}</span>}
+                    {i === active && <span className="step__body">{t(s.body, false)}</span>}
                   </span>
                 </button>
               </li>
@@ -116,8 +117,8 @@ export function Mechanism() {
               <span className="risk__icon"><Icon size={20} /></span>
               <div>
                 {on && <span className="risk__flag">このステップのリスク</span>}
-                <h4>{r.title}</h4>
-                <p>{r.body}</p>
+                <h4>{t(r.title)}</h4>
+                <p>{t(r.body)}</p>
               </div>
             </div>
           );
@@ -132,7 +133,7 @@ export function Mechanism() {
         <div className="contrast__vs">vs</div>
         <div className="contrast__col contrast__col--accent">
           <span className="contrast__label">東京センチュリー</span>
-          <p>自分のB/Sで資産を持つ。だから、<strong>事業への関与が深くなりやすい</strong>。</p>
+          <p>自分の{t('B/S')}で資産を持つ。だから、<strong>事業への関与が深くなりやすい</strong>。</p>
         </div>
       </div>
     </Section>
