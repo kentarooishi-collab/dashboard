@@ -7,6 +7,7 @@ import { CompetitorMap } from './components/CompetitorMap';
 import { Compare } from './components/Compare';
 import { sources } from './data';
 import { pageLinks } from './pages';
+import { VisionTeaser } from './company/Vision';
 
 const nav = [
   { id: 'mechanism', label: '01 仕組み' },
@@ -28,6 +29,7 @@ export function App() {
         <Assets />
         <CompetitorMap selected={selected} onSelect={setSelected} />
         <Compare selected={selected} onSelect={setSelected} />
+        <div className="container"><VisionTeaser href={`${pageLinks('overview')[1].href}#vision`} /></div>
       </main>
       <footer className="site-footer">
         <div className="container">

@@ -18,7 +18,7 @@ export function Plan() {
   return (
     <Section
       id="plan"
-      index="05"
+      index="06"
       eyebrow="中期経営計画"
       title="2030年度に純利益2,000億円。その先の2035年度は4,000億円"
       lead="2026年5月に「長期ビジョン2035」と「中期経営計画2030 〜Shaping Our Blue Planet〜」を公表しました。前の計画（中計2027）は、財務目標を2年前倒しで達成しています。"

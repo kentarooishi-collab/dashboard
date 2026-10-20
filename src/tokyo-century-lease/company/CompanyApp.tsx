@@ -6,6 +6,7 @@ import { Group } from './Group';
 import { Financials } from './Financials';
 import { Shareholders } from './Shareholders';
 import { Plan } from './Plan';
+import { Vision } from './Vision';
 import { sources } from './data';
 import { G } from './glossary';
 
@@ -14,7 +15,8 @@ const nav = [
   { id: 'group', label: '02 グループ' },
   { id: 'financials', label: '03 財務' },
   { id: 'shareholders', label: '04 株主' },
-  { id: 'plan', label: '05 中計' },
+  { id: 'vision', label: '05 ビジョン' },
+  { id: 'plan', label: '06 中計' },
 ];
 
 const facts = [
@@ -40,7 +42,7 @@ export function CompanyApp() {
               <span className="nobr">東京センチュリーを、</span><span className="nobr">もう一歩深く。</span>
             </h1>
             <p className="hero__lead">
-              どう生まれ、誰と組み、何を持ち、どこへ向かうのか。<strong>沿革・グループ・財務・株主・中期経営計画</strong>の5つの視点で整理しました。
+              どう生まれ、誰と組み、何を持ち、どこへ向かうのか。<strong>沿革・グループ・財務・株主・ビジョン・中期経営計画</strong>の6つの視点で整理しました。
               業界全体や競合との比較は<a href={pageLinks('company')[0].href}>業界・競合ダッシュボード</a>をご覧ください。
             </p>
             <p className="hero__hint"><span className="term">点線の用語</span>にマウスを乗せる（スマホはタップ）と、意味が表示されます。</p>
@@ -65,6 +67,7 @@ export function CompanyApp() {
         <Group />
         <Financials />
         <Shareholders />
+        <Vision />
         <Plan />
 
         <section className="section">

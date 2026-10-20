@@ -270,6 +270,17 @@ td.r .num { position: relative; }
 tr.is-sel .cell-bar { background: var(--accent); }
 td.summary { color: var(--ink-2); font-size: 12.5px; min-width: 280px; }
 
+/* ---------- Vision teaser ---------- */
+.vision-teaser { position: relative; display: block; margin-top: 56px; min-height: 260px; border-radius: var(--radius); overflow: hidden; text-decoration: none; color: #fff; background: #061226; box-shadow: var(--shadow); }
+.vision-teaser__bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: .55; transition: transform .6s ease, opacity .3s; }
+.vision-teaser::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,18,38,.95) 0%, rgba(6,18,38,.75) 45%, rgba(6,18,38,.2) 100%); }
+.vision-teaser:hover .vision-teaser__bg { transform: scale(1.04); opacity: .7; }
+.vision-teaser__body { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 12px; padding: 40px; max-width: 640px; }
+.vision-teaser__eyebrow { font-size: 12px; font-weight: 800; letter-spacing: .14em; color: #7fd4ff; }
+.vision-teaser__title { font-size: clamp(20px, 2.6vw, 28px); font-weight: 800; line-height: 1.45; }
+.vision-teaser__cta { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; margin-top: 6px; padding: 8px 16px; border-radius: 999px; background: #7fd4ff; color: #061226; font-weight: 800; font-size: 14px; }
+@media (max-width: 640px) { .vision-teaser__body { padding: 28px 22px; } }
+
 /* ---------- Footer ---------- */
 .site-footer p + p { margin-top: 6px; }
 .sources a { color: var(--muted); }
