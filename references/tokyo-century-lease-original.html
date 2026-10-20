@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>東京センチュリー入門｜リース業界インタラクティブ・ダッシュボード</title>
+<style>
+:root {
+  --bg:#07111f; --panel:#0d1b2b; --panel2:#11243a; --text:#e8f0f7; --muted:#91a3b5;
+  --line:#23415f; --accent:#67d4ff; --accent2:#8ee3b0; --warm:#ffd166; --danger:#ff8c8c;
+  --tc:#68d5ff; --mhc:#9ce5b8; --orix:#ffd166; --smfl:#b9a6ff; --fgl:#ff9cc7;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Yu Gothic UI","Meiryo",system-ui,sans-serif;background:
+ radial-gradient(circle at 20% -10%,#17395d 0,transparent 36%),
+ radial-gradient(circle at 90% 0%,#14394a 0,transparent 34%),var(--bg);color:var(--text)}
+.wrap{max-width:1220px;margin:auto;padding:26px}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:stretch}
+.card{background:linear-gradient(180deg,rgba(17,36,58,.95),rgba(10,24,39,.95));border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 16px 40px rgba(0,0,0,.18)}
+h1{font-size:clamp(27px,4vw,46px);line-height:1.08;margin:0 0 10px}
+h2{margin:0 0 12px;font-size:20px} h3{margin:0 0 8px;font-size:16px}
+.lead{color:var(--muted);font-size:16px;line-height:1.75}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:7px 11px;border:1px solid var(--line);border-radius:999px;color:#bed0df;font-size:12px;margin:4px 4px 4px 0}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.kpi{padding:15px;border-radius:16px;background:#0a1726;border:1px solid #203b56}
+.kpi b{font-size:26px;display:block;margin-top:4px}
+.kpi small{color:var(--muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 12px}
+.tab{appearance:none;border:1px solid var(--line);background:#0b1928;color:#cfe0ee;padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700}
+.tab[aria-selected="true"]{background:var(--accent);color:#042132;border-color:transparent}
+.panel{display:none} .panel.active{display:block;animation:fade .32s ease}
+@keyframes fade{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.note{color:var(--muted);line-height:1.7;font-size:14px}
+svg{width:100%;height:auto;display:block}
+.flow-node{fill:#0d2134;stroke:#2a5a78;stroke-width:1.5}
+.flow-node.tc{stroke:var(--accent);filter:drop-shadow(0 0 12px rgba(103,212,255,.18))}
+.flow-text{fill:#eaf5fc;font-size:13px;font-weight:700}
+.flow-sub{fill:#95aabd;font-size:11px}
+.flow-line{stroke:#67d4ff;stroke-width:2.4;fill:none;stroke-dasharray:8 8;animation:dash 1.4s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-32}}
+@media (prefers-reduced-motion:reduce){.flow-line{animation:none} .panel.active{animation:none}}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 4px;color:#c8d8e5;font-size:12px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0 14px}
+label{font-size:12px;color:var(--muted)} select{width:100%;margin-top:5px;background:#081522;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:15px}
+#chartBox{position:relative;min-height:440px}
+.tooltip{position:absolute;pointer-events:none;background:#020913;border:1px solid #36536d;padding:10px 12px;border-radius:12px;opacity:0;transition:.15s;max-width:260px;font-size:12px;line-height:1.5;z-index:5}
+.company-list{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
+.company-btn{border:1px solid var(--line);background:#0a1726;color:#dce9f3;border-radius:14px;padding:12px;cursor:pointer;text-align:left;min-height:74px}
+.company-btn.active{outline:2px solid var(--accent);background:#10283e}
+.company-btn b{display:block;font-size:13px;margin-bottom:4px} .company-btn span{font-size:11px;color:var(--muted)}
+.detail{margin-top:12px;border-top:1px solid var(--line);padding-top:14px}
+.asset-wheel{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.asset{background:#0a1726;border:1px solid var(--line);border-radius:16px;padding:14px;min-height:118px}
+.asset .ico{font-size:26px} .asset p{margin:7px 0 0;color:var(--muted);font-size:13px;line-height:1.55}
+.callout{border-left:3px solid var(--accent);padding:12px 14px;background:#081827;border-radius:0 12px 12px 0;color:#cfe1ed}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:780px;font-size:13px}
+th,td{padding:12px;border-bottom:1px solid #203a55;text-align:right} th:first-child,td:first-child,td:last-child{text-align:left}
+th{background:#10243a;color:#bdd3e3;position:sticky;top:0}
+.source{font-size:12px;color:#93a7b9} a{color:#83dbff}
+footer{margin:22px 0 6px;color:#8195a7;font-size:12px}
+@media(max-width:860px){.hero,.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}.company-list{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:15px}.grid3,.asset-wheel,.controls,.company-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+  <div class="card">
+    <div class="pill">東京センチュリー入門</div><div class="pill">2026年3月期</div>
+    <h1>「リース会社」なのに、<br>なぜ事業の中まで入れるのか？</h1>
+    <p class="lead">答えは、<b>アセット（資産）を持ち、資金・残価・運用リスクまで引き受ける</b>から。<br>
+    このダッシュボードでは、会社の仕組み → アセット → 競合マップの順で触りながら理解できます。</p>
+  </div>
+  <div class="card">
+    <h2>東京センチュリーのサイズ感</h2>
+    <div class="kpis">
+      <div class="kpi"><small>総資産</small><b>7.21兆円</b></div>
+      <div class="kpi"><small>純利益</small><b>1,113億円</b></div>
+      <div class="kpi"><small>ROE</small><b>10.4%</b></div>
+      <div class="kpi"><small>自己資本比率</small><b>15.5%</b></div>
+    </div>
+  </div>
+</section>
+
+<nav class="tabs" aria-label="Dashboard sections">
+  <button class="tab" aria-selected="true" data-tab="intro">① まず仕組み</button>
+  <button class="tab" aria-selected="false" data-tab="assets">② アセットって何？</button>
+  <button class="tab" aria-selected="false" data-tab="map">③ 競合マップ</button>
+  <button class="tab" aria-selected="false" data-tab="companies">④ 会社を比較</button>
+</nav>
+
+<section id="intro" class="panel active">
+  <div class="grid2">
+    <div class="card">
+      <h2>リースの本質：所有と利用を分ける</h2>
+      <svg viewBox="0 0 720 360" role="img" aria-label="顧客、東京センチュリー、資産、資金市場の関係図">
+        <defs><marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#67d4ff"/></marker></defs>
+        <rect x="30" y="130" rx="18" width="170" height="96" class="flow-node"/>
+        <text x="115" y="164" text-anchor="middle" class="flow-text">利用企業</text>
+        <text x="115" y="188" text-anchor="middle" class="flow-sub">「使いたい。でも持ちたくない」</text>
+
+        <rect x="275" y="105" rx="22" width="190" height="145" class="flow-node tc"/>
+        <text x="370" y="145" text-anchor="middle" class="flow-text">東京センチュリー</text>
+        <text x="370" y="170" text-anchor="middle" class="flow-sub">資金調達</text>
+        <text x="370" y="190" text-anchor="middle" class="flow-sub">アセット保有</text>
+        <text x="370" y="210" text-anchor="middle" class="flow-sub">残価・運用リスク</text>
+
+        <rect x="535" y="38" rx="18" width="155" height="92" class="flow-node"/>
+        <text x="612" y="72" text-anchor="middle" class="flow-text">資金市場</text>
+        <text x="612" y="96" text-anchor="middle" class="flow-sub">銀行借入・社債など</text>
+
+        <rect x="535" y="220" rx="18" width="155" height="92" class="flow-node"/>
+        <text x="612" y="254" text-anchor="middle" class="flow-text">アセット</text>
+        <text x="612" y="278" text-anchor="middle" class="flow-sub">航空機・車・不動産…</text>
+
+        <path d="M535 87 C495 87,486 118,465 135" class="flow-line" marker-end="url(#arr)"/>
+        <path d="M465 205 C500 218,510 254,535 263" class="flow-line" marker-end="url(#arr)"/>
+        <path d="M535 282 C465 332,250 333,195 213" class="flow-line" marker-end="url(#arr)"/>
+        <path d="M200 160 C230 147,248 145,275 146" class="flow-line" marker-end="url(#arr)"/>
+      </svg>
+      <div class="callout"><b>ポイント：</b> 東京センチュリーが引き受けるのは「借金」だけではなく、<b>資産保有・資金調達・残価・運用</b>まで含むリスクの束。</div>
+    </div>
+    <div class="card">
+      <h2>だから事業に食い込むのが合理的</h2>
+      <div class="grid3">
+        <div class="asset"><div class="ico">💴</div><h3>資金</h3><p>巨額の資金を長期で調達し、顧客の設備投資を肩代わりする。</p></div>
+        <div class="asset"><div class="ico">✈️</div><h3>資産価値</h3><p>10年後にいくらで売れるか。残価を読む力が利益に直結。</p></div>
+        <div class="asset"><div class="ico">🧭</div><h3>事業理解</h3><p>リスクを減らすには、その資産が使われる業界・事業そのものを理解する必要がある。</p></div>
+      </div>
+      <p class="note" style="margin-top:14px">「アドバイスして終わり」のコンサルと違い、東京センチュリーは自分のB/Sを使って資産を持つ。だから、事業への関与が深くなりやすい。</p>
+    </div>
+  </div>
+</section>
+
+<section id="assets" class="panel">
+  <div class="card">
+    <h2>アセット = お金を生む「価値あるもの」</h2>
+    <p class="note">会計上は現金や債権も資産ですが、東京センチュリーを理解する時は「将来キャッシュを生む商売道具」と考えると分かりやすい。</p>
+    <div class="asset-wheel">
+      <div class="asset"><div class="ico">✈️</div><h3>航空機</h3><p>リース料＋将来の売却価値。機種・需給・整備状態まで残価に効く。</p></div>
+      <div class="asset"><div class="ico">🚙</div><h3>モビリティ</h3><p>車両そのものだけでなく、管理・EV・充電・データ活用へ広がる。</p></div>
+      <div class="asset"><div class="ico">🏢</div><h3>不動産</h3><p>オフィス、物流施設、ホテル、データセンターなど。保有・投資・運営へ。</p></div>
+      <div class="asset"><div class="ico">☀️</div><h3>社会インフラ</h3><p>太陽光、蓄電池、エネルギー設備。長期キャッシュフロー型。</p></div>
+      <div class="asset"><div class="ico">🖥️</div><h3>IT機器</h3><p>PC・サーバー等の導入から回収・再利用までライフサイクル管理。</p></div>
+      <div class="asset"><div class="ico">🏭</div><h3>設備</h3><p>製造ライン、工作機械、医療機器など。祖業に近い王道リース。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="map" class="panel">
+  <div class="card">
+    <h2>競合マップを触ってみる</h2>
+    <div class="controls">
+      <label>横軸<select id="xMetric"><option value="assets">総資産</option><option value="equity">自己資本比率</option><option value="profit">純利益</option></select></label>
+      <label>縦軸<select id="yMetric"><option value="roe">ROE</option><option value="equity">自己資本比率</option><option value="profit">純利益</option></select></label>
+      <label>円の大きさ<select id="sizeMetric"><option value="profit">純利益</option><option value="assets">総資産</option><option value="equity">自己資本比率</option></select></label>
+    </div>
+    <div id="chartBox">
+      <svg id="bubble" viewBox="0 0 900 500" role="img" aria-label="競合企業のバブルチャート"></svg>
+      <div id="tip" class="tooltip" role="status"></div>
+    </div>
+    <div class="legend" id="legend"></div>
+    <p class="note">※ 各社の事業構成・会計基準は完全には同一ではありません。オリックスは銀行・保険等も含むため、純粋なリース会社比較というより「リースから多角化した企業」の参照点です。</p>
+  </div>
+</section>
+
+<section id="companies" class="panel">
+  <div class="card">
+    <h2>会社をクリックして位置づけを見る</h2>
+    <div id="companyList" class="company-list"></div>
+    <div id="companyDetail" class="detail" aria-live="polite"></div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h2>比較表</h2>
+    <div class="table-wrap"><table><thead><tr><th>会社</th><th>総資産</th><th>純利益</th><th>ROE</th><th>自己資本比率</th><th>ざっくり位置づけ</th></tr></thead>
+    <tbody>
+      <tr><td>東京センチュリー</td><td>7.21兆円</td><td>111.3十億円</td><td>10.4%</td><td>15.5%</td><td>国内・海外の顧客起点ビジネスに、社会インフラ／トランスポート／モビリティ／企業投資を組み合わせる。</td></tr><tr><td>三菱HCキャピタル</td><td>13.09兆円</td><td>162.2十億円</td><td>8.6%</td><td>15.2%</td><td>グローバルなアセットファイナンス。航空・物流・不動産・環境エネルギーなど専門事業を広く展開。</td></tr><tr><td>オリックス</td><td>18.00兆円</td><td>447.3十億円</td><td>10.4%</td><td>24.9%</td><td>リースから発展した総合事業会社。法人金融、不動産、PE、環境、保険、銀行、輸送機器まで多角化。</td></tr><tr><td>三井住友ファイナンス＆リース</td><td>10.89兆円</td><td>120.1十億円</td><td>10.2%</td><td>11.1%</td><td>SMFG×住友商事。ホールセール、グローバル、環境、不動産、投融資。航空機・不動産AMにも展開。</td></tr><tr><td>芙蓉総合リース</td><td>3.84兆円</td><td>21.6十億円</td><td>4.4%</td><td>13.1%</td><td>不動産、航空、環境、BPO/ICT、ヘルスケア、モビリティ/物流、循環型経済へ拡張。</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<footer>
+  数値は2026年3月期/3月末の各社公表値をベースに整理。<br>
+  Sources:
+  <a href="https://www.tokyocentury.co.jp/jp/ir/library/pdf/2025_4q_jp_earnings-call.pdf">Tokyo Century</a> /
+  <a href="https://www.mitsubishi-hc-capital.com/investors/library/assets/pdf/2026052101.pdf">Mitsubishi HC Capital</a> /
+  <a href="https://www.orix.co.jp/grp/pdf/company/ir/financial_highlight/ORIX5YPDF2026.pdf">ORIX</a> /
+  <a href="https://www.smfl.co.jp/corporate/assets/260513.pdf">SMFL</a> /
+  <a href="https://www2.jpx.co.jp/disc/84240/140120260511523036.pdf">Fuyo General Lease</a>
+</footer>
+</div>
+
+<script>
+(() => {
+const companies = [{"name": "東京センチュリー", "short": "TC", "assets": 7.2148, "profit": 111.299, "roe": 10.4, "equity": 15.5, "summary": "国内・海外の顧客起点ビジネスに、社会インフラ／トランスポート／モビリティ／企業投資を組み合わせる。", "financial": "https://www.tokyocentury.co.jp/jp/ir/library/pdf/2025_4q_jp_earnings-call.pdf", "business": "https://www.tokyocentury.co.jp/jp/company/info/outline/"}, {"name": "三菱HCキャピタル", "short": "MHC", "assets": 13.089557, "profit": 162.2, "roe": 8.6, "equity": 15.2, "summary": "グローバルなアセットファイナンス。航空・物流・不動産・環境エネルギーなど専門事業を広く展開。", "financial": "https://www.mitsubishi-hc-capital.com/investors/library/assets/pdf/2026052101.pdf", "business": "https://www.mitsubishi-hc-capital.com/investors/individual/at-a-glance.html"}, {"name": "オリックス", "short": "ORIX", "assets": 18.002776, "profit": 447.265, "roe": 10.4, "equity": 24.9, "summary": "リースから発展した総合事業会社。法人金融、不動産、PE、環境、保険、銀行、輸送機器まで多角化。", "financial": "https://www.orix.co.jp/grp/pdf/company/ir/financial_highlight/ORIX5YPDF2026.pdf", "business": "https://www.orix.co.jp/grp/company/ir/financial/segment/"}, {"name": "三井住友ファイナンス＆リース", "short": "SMFL", "assets": 10.894144, "profit": 120.069, "roe": 10.2, "equity": 11.1, "summary": "SMFG×住友商事。ホールセール、グローバル、環境、不動産、投融資。航空機・不動産AMにも展開。", "financial": "https://www.smfl.co.jp/corporate/assets/260513.pdf", "business": "https://www.smfl.co.jp/corporate/strength/"}, {"name": "芙蓉総合リース", "short": "FGL", "assets": 3.843725, "profit": 21.565, "roe": 4.4, "equity": 13.1, "summary": "不動産、航空、環境、BPO/ICT、ヘルスケア、モビリティ/物流、循環型経済へ拡張。", "financial": "https://www2.jpx.co.jp/disc/84240/140120260511523036.pdf", "business": "https://www.fgl.co.jp/fgl/about.html"}];
+const colors = ['#68d5ff','#9ce5b8','#ffd166','#b9a6ff','#ff9cc7'];
+const metrics = {
+  assets: {label:'総資産', unit:'兆円', fmt:v=>v.toFixed(2)},
+  profit: {label:'純利益', unit:'十億円', fmt:v=>v.toFixed(1)},
+  roe: {label:'ROE', unit:'%', fmt:v=>v.toFixed(1)},
+  equity: {label:'自己資本比率', unit:'%', fmt:v=>v.toFixed(1)}
+};
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected','false'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.setAttribute('aria-selected','true');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='map') draw();
+  });
+});
+
+const svg = document.getElementById('bubble');
+const tip = document.getElementById('tip');
+const chartBox = document.getElementById('chartBox');
+function val(c,k){ return Number(c[k])||0; }
+function draw(){
+  const xk=document.getElementById('xMetric').value, yk=document.getElementById('yMetric').value, sk=document.getElementById('sizeMetric').value;
+  const W=900,H=500,m={l:90,r:35,t:30,b:70};
+  const xs=companies.map(c=>val(c,xk)), ys=companies.map(c=>val(c,yk)), ss=companies.map(c=>val(c,sk));
+  const xmin=Math.min(...xs), xmax=Math.max(...xs), ymin=Math.min(...ys), ymax=Math.max(...ys), smax=Math.max(...ss);
+  const pad=(a,b)=>Math.abs(b-a)*.12 || 1;
+  const xp=pad(xmin,xmax), yp=pad(ymin,ymax);
+  const sx=v=>m.l+(v-(xmin-xp))/(xmax-xmin+2*xp)*(W-m.l-m.r);
+  const sy=v=>H-m.b-(v-(ymin-yp))/(ymax-ymin+2*yp)*(H-m.t-m.b);
+  const ns='http://www.w3.org/2000/svg';
+  svg.innerHTML='';
+  const g=document.createElementNS(ns,'g'); svg.appendChild(g);
+  for(let i=0;i<6;i++){
+    const y=m.t+i*(H-m.t-m.b)/5;
+    const line=document.createElementNS(ns,'line'); line.setAttribute('x1',m.l);line.setAttribute('x2',W-m.r);line.setAttribute('y1',y);line.setAttribute('y2',y);line.setAttribute('stroke','#1f3b55');line.setAttribute('stroke-width','1');g.appendChild(line);
+  }
+  const axisX=document.createElementNS(ns,'line'); axisX.setAttribute('x1',m.l);axisX.setAttribute('x2',W-m.r);axisX.setAttribute('y1',H-m.b);axisX.setAttribute('y2',H-m.b);axisX.setAttribute('stroke','#6f899d');g.appendChild(axisX);
+  const axisY=document.createElementNS(ns,'line'); axisY.setAttribute('x1',m.l);axisY.setAttribute('x2',m.l);axisY.setAttribute('y1',m.t);axisY.setAttribute('y2',H-m.b);axisY.setAttribute('stroke','#6f899d');g.appendChild(axisY);
+  companies.forEach((c,i)=>{
+    const r=16+Math.sqrt(val(c,sk)/smax)*38;
+    const circle=document.createElementNS(ns,'circle');
+    circle.setAttribute('cx',sx(val(c,xk))); circle.setAttribute('cy',sy(val(c,yk))); circle.setAttribute('r',r);
+    circle.setAttribute('fill',colors[i]); circle.setAttribute('fill-opacity','.70'); circle.setAttribute('stroke','#dff7ff'); circle.setAttribute('stroke-width',c.short==='TC'?'3':'1.2');
+    circle.style.cursor='pointer';
+    const show=(ev)=>{ tip.style.opacity='1'; tip.innerHTML=`<b>${c.name}</b><br>${metrics[xk].label}：${metrics[xk].fmt(val(c,xk))} ${metrics[xk].unit}<br>${metrics[yk].label}：${metrics[yk].fmt(val(c,yk))} ${metrics[yk].unit}<br>${metrics[sk].label}：${metrics[sk].fmt(val(c,sk))} ${metrics[sk].unit}`; const box=chartBox.getBoundingClientRect(); tip.style.left=Math.min(ev.clientX-box.left+12,box.width-250)+'px'; tip.style.top=Math.max(8,ev.clientY-box.top-40)+'px'; };
+    circle.addEventListener('pointermove',show); circle.addEventListener('pointerdown',show); circle.addEventListener('pointerleave',()=>tip.style.opacity='0');
+    g.appendChild(circle);
+    const t=document.createElementNS(ns,'text');t.setAttribute('x',sx(val(c,xk)));t.setAttribute('y',sy(val(c,yk))+4);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#06131f');t.setAttribute('font-weight','800');t.setAttribute('font-size',Math.max(10,Math.min(14,r/3)));t.textContent=c.short;g.appendChild(t);
+  });
+  const xt=document.createElementNS(ns,'text');xt.setAttribute('x',(m.l+W-m.r)/2);xt.setAttribute('y',H-20);xt.setAttribute('text-anchor','middle');xt.setAttribute('fill','#a7bdcd');xt.textContent=metrics[xk].label+' ('+metrics[xk].unit+')';svg.appendChild(xt);
+  const yt=document.createElementNS(ns,'text');yt.setAttribute('x',18);yt.setAttribute('y',(m.t+H-m.b)/2);yt.setAttribute('transform','rotate(-90 18 '+((m.t+H-m.b)/2)+')');yt.setAttribute('text-anchor','middle');yt.setAttribute('fill','#a7bdcd');yt.textContent=metrics[yk].label+' ('+metrics[yk].unit+')';svg.appendChild(yt);
+}
+['xMetric','yMetric','sizeMetric'].forEach(id=>document.getElementById(id).addEventListener('change',draw));
+document.getElementById('legend').innerHTML=companies.map((c,i)=>`<span><i class="dot" style="background:${colors[i]}"></i>${c.name}</span>`).join('');
+
+const list=document.getElementById('companyList'), detail=document.getElementById('companyDetail');
+companies.forEach((c,i)=>{
+  const b=document.createElement('button');b.type='button';b.className='company-btn'+(i===0?' active':'');b.innerHTML=`<b>${c.name}</b><span>総資産 ${c.assets.toFixed(2)}兆円</span>`;
+  b.addEventListener('click',()=>{document.querySelectorAll('.company-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');showDetail(c);});
+  list.appendChild(b);
+});
+function showDetail(c){
+  detail.innerHTML=`<h3>${c.name}</h3><p class="note">${c.summary}</p><div class="grid3"><div class="kpi"><small>総資産</small><b>${c.assets.toFixed(2)}兆円</b></div><div class="kpi"><small>純利益</small><b>${c.profit.toFixed(1)}十億円</b></div><div class="kpi"><small>ROE</small><b>${c.roe.toFixed(1)}%</b></div></div><p class="source"><a href="${c.financial}" target="_blank" rel="noreferrer">財務ソース</a> / <a href="${c.business}" target="_blank" rel="noreferrer">事業ソース</a></p>`;
+}
+showDetail(companies[0]); draw();
+})();
+</script>
+</body></html>
