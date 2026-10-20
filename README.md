@@ -10,6 +10,7 @@
 | slug | タイトル | URL |
 | --- | --- | --- |
 | `tokyo-century-lease` | 東京センチュリー入門｜リース業界ダッシュボード | [/dashboard/tokyo-century-lease/](https://kentarooishi-collab.github.io/dashboard/tokyo-century-lease/) |
+| `tokyo-century-lease/company` | └ 会社詳細（沿革・グループ・財務・株主・中計） | [/dashboard/tokyo-century-lease/company/](https://kentarooishi-collab.github.io/dashboard/tokyo-century-lease/company/) |
 
 ## 構成
 
@@ -24,7 +25,7 @@ src/
 references/               元にした資料（オリジナルHTMLなど）
 ```
 
-`src/<slug>/index.html` があるフォルダは、ビルド時に自動でページとして登録されます（`_` で始まるフォルダは除外）。
+`src/<slug>/index.html` と、その1階層下のサブページ `src/<slug>/<sub>/index.html` は、ビルド時に自動でページとして登録されます（`_` で始まるフォルダは除外）。
 
 ## 新しいダッシュボードを追加する
 

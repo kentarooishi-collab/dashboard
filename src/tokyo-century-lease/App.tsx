@@ -6,6 +6,7 @@ import { Assets } from './components/Assets';
 import { CompetitorMap } from './components/CompetitorMap';
 import { Compare } from './components/Compare';
 import { sources } from './data';
+import { pageLinks } from './pages';
 
 const nav = [
   { id: 'mechanism', label: '01 仕組み' },
@@ -20,7 +21,7 @@ export function App() {
 
   return (
     <>
-      <SiteHeader title="東京センチュリー入門" nav={nav} />
+      <SiteHeader title="東京センチュリー入門" nav={nav} pages={pageLinks('overview')} />
       <main>
         <Hero />
         <Mechanism />

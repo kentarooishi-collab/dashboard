@@ -3,12 +3,15 @@ import { LayoutGrid } from 'lucide-react';
 import { ThemeToggle } from './theme';
 
 export interface NavItem { id: string; label: string }
+export interface PageLink { href: string; label: string; current?: boolean }
 
 interface Props {
   /** ダッシュボード名（ポータルでは省略） */
   title?: string;
   /** ページ内セクションへのリンク。スクロール位置に合わせて現在地をハイライトする */
   nav?: NavItem[];
+  /** 同じダッシュボード内のページ切り替え（サブページがあるとき） */
+  pages?: PageLink[];
 }
 
 /** 現在表示中のセクション id を返す（スクロールスパイ） */
@@ -31,7 +34,7 @@ export function useActiveSection(ids: string[]) {
   return active;
 }
 
-export function SiteHeader({ title, nav = [] }: Props) {
+export function SiteHeader({ title, nav = [], pages = [] }: Props) {
   const active = useActiveSection(nav.map((n) => n.id));
   const home = import.meta.env.BASE_URL;
   return (
@@ -50,6 +53,15 @@ export function SiteHeader({ title, nav = [] }: Props) {
         {!nav.length && <span style={{ marginLeft: 'auto' }} />}
         <ThemeToggle />
       </div>
+      {pages.length > 0 && (
+        <div className="site-header__pages">
+          <div className="container site-header__pages-inner">
+            {pages.map((p) => (
+              <a key={p.href} href={p.href} aria-current={p.current ? 'page' : undefined}>{p.label}</a>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

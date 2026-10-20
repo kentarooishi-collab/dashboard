@@ -131,7 +131,9 @@ export function Term({ def, children, focusable = true }: Props) {
 export function withTerms(text: string, glossary: Record<string, TermDef>, focusable = true): ReactNode {
   const keys = Object.keys(glossary).sort((a, b) => b.length - a.length);
   if (!keys.length) return text;
-  const re = new RegExp(`(${keys.map((k) => k.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')).join('|')})`, 'g');
+  // カタカナで終わる用語は、直後にカタカナが続く場合（例: アセット|ファンド）は別の語なので拾わない
+  const esc = (k: string) => k.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + (/[ァ-ヶー]$/.test(k) ? '(?![ァ-ヶー])' : '');
+  const re = new RegExp(`(${keys.map(esc).join('|')})`, 'g');
   const seen = new Set<string>();
   return text.split(re).map((part, i) => {
     if (glossary[part] && !seen.has(part)) {
